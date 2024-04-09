@@ -9,46 +9,50 @@ import { paginate } from './paginate.js'
 
 const nameRx = /^[a-zA-Z0-9_.-]+$/
 
-export const settingsPath = ({
-	stackName,
-	scope,
-	context,
-	property,
-}: {
-	stackName: string
-	scope: string
-	context: string
-	property?: string
-}): string => {
+type ParameterNameArgs =
+	| { stackName: string; scope: string }
+	| { stackName: string; scope: string; context: string }
+	| {
+			stackName: string
+			scope: string
+			context: string
+			property: string
+	  }
+
+export const settingsPath = (args: ParameterNameArgs): string => {
+	const { stackName, scope } = args
 	if (!nameRx.test(stackName))
 		throw new Error(`Invalid stackName value: ${stackName}!`)
 	if (!nameRx.test(scope)) throw new Error(`Invalid scope value: ${scope}!`)
-	if (!nameRx.test(context))
-		throw new Error(`Invalid context value: ${context}!`)
 
-	const parts = [stackName, scope, context]
-	if (property !== undefined) {
-		if (!nameRx.test(property))
-			throw new Error(`Invalid property value: ${property}!`)
-		parts.push(property)
+	const parts = [stackName, scope]
+
+	if ('context' in args) {
+		if (!nameRx.test(args.context))
+			throw new Error(`Invalid context value: ${args.context}!`)
+		parts.push(args.context)
 	}
+
+	if ('property' in args) {
+		if (!('context' in args)) throw new Error(`Missing context!`)
+		if (!nameRx.test(args.property))
+			throw new Error(`Invalid property value: ${args.property}!`)
+		parts.push(args.property)
+	}
+
 	return `/${parts.join('/')}`
 }
 
-export const getSettings =
+export const get =
+	(ssm: SSMClient) =>
 	<Settings extends Record<string, string>>({
-		ssm,
 		stackName,
-		scope,
-		context,
+		...nameParams
 	}: {
-		ssm: SSMClient
 		stackName: string
-		scope: string
-		context: string
-	}) =>
+	} & ParameterNameArgs) =>
 	async (): Promise<Settings> => {
-		const Path = settingsPath({ stackName, scope, context })
+		const Path = settingsPath({ stackName, ...nameParams })
 		const Parameters: Parameter[] = []
 		await paginate({
 			paginator: async (NextToken?: string) =>
@@ -81,14 +85,13 @@ export const getSettings =
 		)
 	}
 
-export const putSettings =
+export const put =
+	(ssm: SSMClient) =>
 	({
-		ssm,
 		stackName,
 		scope,
 		context,
 	}: {
-		ssm: SSMClient
 		stackName: string
 		scope: string
 		context: string
@@ -128,14 +131,13 @@ export const putSettings =
 		return { name: Name }
 	}
 
-export const deleteSettings =
+export const remove =
+	(ssm: SSMClient) =>
 	({
-		ssm,
 		stackName,
 		scope,
 		context,
 	}: {
-		ssm: SSMClient
 		stackName: string
 		scope: string
 		context: string
@@ -158,16 +160,15 @@ export const deleteSettings =
 		return { name: Name }
 	}
 
-export const getSettingsOptional =
-	<Settings extends Record<string, string>, Default>(
-		args: Parameters<typeof getSettings>[0],
-	) =>
+export const getOrElse =
+	(ssm: SSMClient) =>
+	<Settings extends Record<string, string>, Default>(args: ParameterNameArgs) =>
 	/**
 	 * In case of an unconfigured stack, returns default values
 	 */
 	async (defaultValue: Default): Promise<Settings | Default> => {
 		try {
-			return await getSettings<Settings>(args)()
+			return await get(ssm)<Settings>(args)()
 		} catch {
 			return defaultValue
 		}

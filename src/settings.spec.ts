@@ -1,17 +1,13 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { SSMClient } from '@aws-sdk/client-ssm'
-import { getSettingsOptional, settingsPath, getSettings } from './settings.js'
+import { getOrElse, settingsPath, get } from './settings.js'
 
-void describe('getSettingsOptional()', () => {
+void describe('getOrElse()', () => {
 	void it('should return the given default value if parameter does not exist', async () => {
-		const stackConfig = getSettingsOptional<
-			Record<string, string>,
-			Record<string, never>
-		>({
-			ssm: {
-				send: async () => Promise.resolve({ Parameters: undefined }),
-			} as unknown as SSMClient,
+		const stackConfig = getOrElse({
+			send: async () => Promise.resolve({ Parameters: undefined }),
+		} as unknown as SSMClient)<Record<string, string>, Record<string, never>>({
 			stackName: 'STACK_NAME',
 			scope: 'stack',
 			context: 'context',
@@ -32,6 +28,26 @@ void describe('settingsPath()', () => {
 				property: 'someProperty',
 			}),
 			'/hello-nrfcloud/stack/context/someProperty',
+		))
+
+	void it('should produce a fully qualified parameter name (without a context)', () =>
+		assert.equal(
+			settingsPath({
+				scope: 'stack',
+				stackName: 'hello-nrfcloud',
+			}),
+			'/hello-nrfcloud/stack',
+		))
+
+	void it('should not allow parameter without context', () =>
+		assert.throws(
+			() =>
+				settingsPath({
+					scope: 'stack',
+					stackName: 'hello-nrfcloud',
+					property: 'foo',
+				} as any),
+			/Missing context!/,
 		))
 
 	void it('should produce a fully qualified parameter name for valid string scope', () =>
@@ -57,7 +73,7 @@ void describe('settingsPath()', () => {
 	})
 })
 
-void describe('getSettings()', () => {
+void describe('get()', () => {
 	void it('should return the object with same scope', async () => {
 		const returnedValues = [
 			{
@@ -74,10 +90,9 @@ void describe('getSettings()', () => {
 			},
 		]
 
-		const stackConfig = getSettings({
-			ssm: {
-				send: async () => Promise.resolve({ Parameters: returnedValues }),
-			} as unknown as SSMClient,
+		const stackConfig = get({
+			send: async () => Promise.resolve({ Parameters: returnedValues }),
+		} as unknown as SSMClient)({
 			stackName: 'hello-nrfcloud',
 			scope: 'stack',
 			context: 'context',
