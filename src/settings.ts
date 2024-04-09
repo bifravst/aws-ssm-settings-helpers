@@ -7,46 +7,48 @@ import {
 } from '@aws-sdk/client-ssm'
 import { paginate } from './paginate.js'
 
-const scopeRx = new RegExp(`^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$`)
-const validScope = (scope: string): boolean => scopeRx.test(scope)
+const nameRx = /^[a-zA-Z0-9_.-]+$/
 
 export const settingsPath = ({
 	stackName,
 	scope,
+	context,
 	property,
 }: {
 	stackName: string
 	scope: string
+	context: string
 	property?: string
 }): string => {
-	if (!validScope(scope)) throw new Error(`Invalid scope name`)
+	if (!nameRx.test(stackName))
+		throw new Error(`Invalid stackName value: ${stackName}!`)
+	if (!nameRx.test(scope)) throw new Error(`Invalid scope value: ${scope}!`)
+	if (!nameRx.test(context))
+		throw new Error(`Invalid context value: ${context}!`)
 
-	const base = `/${stackName}/${scope}`
-	return property === undefined ? base : `${base}/${property}`
+	const parts = [stackName, scope, context]
+	if (property !== undefined) {
+		if (!nameRx.test(property))
+			throw new Error(`Invalid property value: ${property}!`)
+		parts.push(property)
+	}
+	return `/${parts.join('/')}`
 }
-
-const settingsName = ({
-	stackName,
-	scope,
-	property,
-}: {
-	stackName: string
-	scope: string
-	property: string
-}): string => settingsPath({ stackName, scope, property })
 
 export const getSettings =
 	<Settings extends Record<string, string>>({
 		ssm,
 		stackName,
 		scope,
+		context,
 	}: {
 		ssm: SSMClient
 		stackName: string
 		scope: string
+		context: string
 	}) =>
 	async (): Promise<Settings> => {
-		const Path = settingsPath({ stackName, scope })
+		const Path = settingsPath({ stackName, scope, context })
 		const Parameters: Parameter[] = []
 		await paginate({
 			paginator: async (NextToken?: string) =>
@@ -65,7 +67,7 @@ export const getSettings =
 		})
 
 		if (Parameters.length === 0)
-			throw new Error(`System not configured: ${Path}!`)
+			throw new Error(`context not configured: ${Path}!`)
 
 		return Parameters.map(({ Name, ...rest }) => ({
 			...rest,
@@ -84,10 +86,12 @@ export const putSettings =
 		ssm,
 		stackName,
 		scope,
+		context,
 	}: {
 		ssm: SSMClient
 		stackName: string
 		scope: string
+		context: string
 	}) =>
 	async ({
 		property,
@@ -101,7 +105,7 @@ export const putSettings =
 		 */
 		deleteBeforeUpdate?: boolean
 	}): Promise<{ name: string }> => {
-		const Name = settingsName({ stackName, scope, property })
+		const Name = settingsPath({ stackName, scope, context, property })
 		if (deleteBeforeUpdate ?? false) {
 			try {
 				await ssm.send(
@@ -129,13 +133,15 @@ export const deleteSettings =
 		ssm,
 		stackName,
 		scope,
+		context,
 	}: {
 		ssm: SSMClient
 		stackName: string
 		scope: string
+		context: string
 	}) =>
 	async ({ property }: { property: string }): Promise<{ name: string }> => {
-		const Name = settingsName({ stackName, scope, property })
+		const Name = settingsPath({ stackName, scope, context, property })
 		try {
 			await ssm.send(
 				new DeleteParameterCommand({

@@ -13,7 +13,8 @@ void describe('getSettingsOptional()', () => {
 				send: async () => Promise.resolve({ Parameters: undefined }),
 			} as unknown as SSMClient,
 			stackName: 'STACK_NAME',
-			scope: 'stack/context',
+			scope: 'stack',
+			context: 'context',
 		})
 
 		const result = await stackConfig({})
@@ -25,7 +26,8 @@ void describe('settingsPath()', () => {
 	void it('should produce a fully qualified parameter name', () =>
 		assert.equal(
 			settingsPath({
-				scope: 'stack/context',
+				scope: 'stack',
+				context: 'context',
 				stackName: 'hello-nrfcloud',
 				property: 'someProperty',
 			}),
@@ -35,7 +37,8 @@ void describe('settingsPath()', () => {
 	void it('should produce a fully qualified parameter name for valid string scope', () =>
 		assert.equal(
 			settingsPath({
-				scope: 'thirdParty/elite',
+				scope: 'thirdParty',
+				context: 'elite',
 				stackName: 'hello-nrfcloud',
 				property: 'someProperty',
 			}),
@@ -45,7 +48,8 @@ void describe('settingsPath()', () => {
 	void it('should error for invalid string scope', () => {
 		assert.throws(() =>
 			settingsPath({
-				scope: 'invalidScope',
+				scope: 'thirdParty',
+				context: 'el ite',
 				stackName: 'hello-nrfcloud',
 				property: 'someProperty',
 			}),
@@ -75,7 +79,8 @@ void describe('getSettings()', () => {
 				send: async () => Promise.resolve({ Parameters: returnedValues }),
 			} as unknown as SSMClient,
 			stackName: 'hello-nrfcloud',
-			scope: 'stack/context',
+			scope: 'stack',
+			context: 'context',
 		})
 
 		const result = await stackConfig()
