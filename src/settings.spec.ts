@@ -1,20 +1,18 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { SSMClient } from '@aws-sdk/client-ssm'
-import { getOrElse, settingsPath, get } from './settings.js'
+import { maybe, settingsPath, get } from './settings.js'
 
-void describe('getOrElse()', () => {
+void describe('maybe()', () => {
 	void it('should return the given default value if parameter does not exist', async () => {
-		const stackConfig = getOrElse({
+		const stackConfig = await maybe({
 			send: async () => Promise.resolve({ Parameters: undefined }),
-		} as unknown as SSMClient)<Record<string, string>, Record<string, never>>({
+		} as unknown as SSMClient)<Record<string, string>>({
 			stackName: 'STACK_NAME',
 			scope: 'stack',
 			context: 'context',
 		})
-
-		const result = await stackConfig({})
-		assert.deepEqual(result, {})
+		assert.equal(stackConfig, null)
 	})
 })
 

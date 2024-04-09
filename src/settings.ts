@@ -160,16 +160,17 @@ export const remove =
 		return { name: Name }
 	}
 
-export const getOrElse =
+export const maybe =
 	(ssm: SSMClient) =>
-	<Settings extends Record<string, string>, Default>(args: ParameterNameArgs) =>
 	/**
 	 * In case of an unconfigured stack, returns default values
 	 */
-	async (defaultValue: Default): Promise<Settings | Default> => {
+	async <Settings extends Record<string, string>>(
+		args: ParameterNameArgs,
+	): Promise<Settings | null> => {
 		try {
 			return await get(ssm)<Settings>(args)()
 		} catch {
-			return defaultValue
+			return null
 		}
 	}
