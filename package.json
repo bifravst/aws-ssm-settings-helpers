@@ -1,0 +1,91 @@
+{
+  "name": "@bifravst/aws-ssm-settings-helpers",
+  "version": "0.0.0-development",
+  "description": "Helper functions written in TypeScript for storing and retrieving application settings in AWS SSM Parameter Store.",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/settings.d.ts",
+        "default": "./dist/settings.js"
+      }
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "test": "tsx --no-warnings --test ./src/*.spec.ts",
+    "prepare": "husky",
+    "prepublishOnly": "npx tsc --noEmit false --outDir ./dist -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bifravst/aws-ssm-settings-helpers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bifravst/aws-ssm-settings-helpers/issues"
+  },
+  "homepage": "https://github.com/bifravst/aws-ssm-settings-helpers",
+  "keywords": [
+    "aws",
+    "ssm",
+    "typescript"
+  ],
+  "author": "Nordic Semiconductor ASA | nordicsemi.no",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "@bifravst/eslint-config-typescript": "6.0.17",
+    "@bifravst/prettier-config": "1.0.0",
+    "@commitlint/config-conventional": "19.1.0",
+    "@types/aws-lambda": "8.10.137",
+    "@types/node": "20.12.3",
+    "husky": "9.0.11",
+    "tsx": "4.7.2"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{md,json,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
+  },
+  "release": {
+    "branches": [
+      "saga",
+      {
+        "name": "!(saga)",
+        "prerelease": true
+      }
+    ],
+    "remoteTags": true,
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      [
+        "@semantic-release/github",
+        {
+          "successComment": false,
+          "failTitle": false
+        }
+      ]
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "package-lock.json",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "prettier": "@bifravst/prettier-config",
+  "peerDependencies": {
+    "@aws-sdk/client-ssm": "^3.549.0"
+  }
+}
