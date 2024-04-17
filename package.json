@@ -8,6 +8,12 @@
         "types": "./dist/settings.d.ts",
         "default": "./dist/settings.js"
       }
+    },
+    "./cdk": {
+      "import": {
+        "types": "./dist/cdk/index.d.ts",
+        "default": "./dist/cdk/index.js"
+      }
     }
   },
   "type": "module",
@@ -85,6 +91,7 @@
   ],
   "prettier": "@bifravst/prettier-config",
   "peerDependencies": {
-    "@aws-sdk/client-ssm": "^3.556.0"
+    "@aws-sdk/client-ssm": "^3.556.0",
+    "aws-cdk-lib": "^2.137.0"
   }
 }
