@@ -90,6 +90,6 @@
   "prettier": "@bifravst/prettier-config",
   "peerDependencies": {
     "@aws-sdk/client-ssm": "^3.606.0",
-    "aws-cdk-lib": "^2.147.2"
+    "aws-cdk-lib": "^2.147.3"
   }
 }
