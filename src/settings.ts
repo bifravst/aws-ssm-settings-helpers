@@ -43,6 +43,15 @@ export const settingsPath = (args: ParameterNameArgs): string => {
 	return `/${parts.join('/')}`
 }
 
+export class ContextNotConfiguredError extends Error {
+	public readonly path: string
+	constructor(path: string) {
+		super(`context not configured: ${path}!`)
+		this.name = 'ContextNotConfiguredError'
+		this.path = path
+	}
+}
+
 export const get =
 	(ssm: SSMClient) =>
 	<Settings extends Record<string, string>>({
@@ -70,8 +79,7 @@ export const get =
 					}),
 		})
 
-		if (Parameters.length === 0)
-			throw new Error(`context not configured: ${Path}!`)
+		if (Parameters.length === 0) throw new ContextNotConfiguredError(Path)
 
 		return Parameters.map(({ Name, ...rest }) => ({
 			...rest,
