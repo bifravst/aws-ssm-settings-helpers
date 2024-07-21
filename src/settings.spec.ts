@@ -103,4 +103,16 @@ void describe('get()', () => {
 			key3: 'value3',
 		})
 	})
+
+	void it('should throw ContextNotConfiguredError if no parameters are found', async () => {
+		const stackConfig = get({
+			send: async () => Promise.resolve({ Parameters: [] }),
+		} as unknown as SSMClient)({
+			stackName: 'hello-nrfcloud',
+			scope: 'stack',
+			context: 'context',
+		})
+
+		await assert.rejects(async () => stackConfig(), /ContextNotConfiguredError/)
+	})
 })
