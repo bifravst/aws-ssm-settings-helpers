@@ -1,7 +1,7 @@
-import { describe, it } from 'node:test'
-import assert from 'node:assert/strict'
 import type { SSMClient } from '@aws-sdk/client-ssm'
-import { maybe, settingsPath, get } from './settings.js'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+import { get, maybe, settingsPath } from './settings.js'
 
 void describe('maybe()', () => {
 	void it('should return the given default value if parameter does not exist', async () => {
