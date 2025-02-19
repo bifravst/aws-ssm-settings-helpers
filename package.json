@@ -46,7 +46,7 @@
     "commitlint": "19.7.1",
     "husky": "9.1.7",
     "lint-staged": "15.4.3",
-    "tsx": "4.19.2"
+    "tsx": "4.19.3"
   },
   "lint-staged": {
     "*.ts": [
