@@ -40,12 +40,12 @@
   "devDependencies": {
     "@bifravst/eslint-config-typescript": "6.4.4",
     "@bifravst/prettier-config": "1.1.17",
-    "@commitlint/config-conventional": "19.8.1",
-    "@types/aws-lambda": "8.10.159",
-    "@types/node": "22.19.7",
-    "commitlint": "19.8.1",
+    "@commitlint/config-conventional": "20.3.1",
+    "@types/aws-lambda": "8.10.160",
+    "@types/node": "25.0.9",
+    "commitlint": "20.3.1",
     "husky": "9.1.7",
-    "lint-staged": "15.5.2",
+    "lint-staged": "16.2.7",
     "tsx": "4.21.0"
   },
   "lint-staged": {
@@ -58,8 +58,8 @@
     ]
   },
   "engines": {
-    "node": ">=22",
-    "npm": ">=10"
+    "node": ">=24",
+    "npm": ">=11"
   },
   "release": {
     "branches": [
@@ -89,7 +89,7 @@
   ],
   "prettier": "@bifravst/prettier-config",
   "peerDependencies": {
-    "@aws-sdk/client-ssm": "^3.971.0",
-    "aws-cdk-lib": "^2.235.0"
+    "@aws-sdk/client-ssm": "^3.972.0",
+    "aws-cdk-lib": "^2.235.1"
   }
 }
