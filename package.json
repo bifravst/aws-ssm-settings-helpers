@@ -42,7 +42,7 @@
     "@bifravst/prettier-config": "1.1.17",
     "@commitlint/config-conventional": "20.4.1",
     "@types/aws-lambda": "8.10.160",
-    "@types/node": "25.2.1",
+    "@types/node": "25.2.2",
     "commitlint": "20.4.1",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
