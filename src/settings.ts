@@ -5,7 +5,7 @@ import {
 	PutParameterCommand,
 	type Parameter,
 } from '@aws-sdk/client-ssm'
-import { paginate } from './paginate.js'
+import { paginate } from './paginate.ts'
 
 const nameRx = /^[a-zA-Z0-9_.-]+$/
 

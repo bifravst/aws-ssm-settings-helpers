@@ -1,1 +1,1 @@
-export * from './Permissions.js'
+export * from './Permissions.ts'

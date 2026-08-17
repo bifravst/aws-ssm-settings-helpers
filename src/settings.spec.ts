@@ -1,7 +1,7 @@
 import type { SSMClient } from '@aws-sdk/client-ssm'
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { get, maybe, settingsPath } from './settings.js'
+import { get, maybe, settingsPath } from './settings.ts'
 
 void describe('maybe()', () => {
 	void it('should return the given default value if parameter does not exist', async () => {
@@ -44,7 +44,7 @@ void describe('settingsPath()', () => {
 					scope: 'stack',
 					stackName: 'hello-nrfcloud',
 					property: 'foo',
-				} as any),
+				}),
 			/Missing context!/,
 		))
 

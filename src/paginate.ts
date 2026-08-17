@@ -1,5 +1,5 @@
-import { isEmpty } from './isNotEmpty.js'
-import { isNullOrUndefined } from './isNullOrUndefined.js'
+import { isEmpty } from './isNotEmpty.ts'
+import { isNullOrUndefined } from './isNullOrUndefined.ts'
 
 /**
  * Iteratively follows paginated results.

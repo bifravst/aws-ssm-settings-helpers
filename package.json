@@ -18,8 +18,8 @@
   },
   "type": "module",
   "scripts": {
-    "test": "tsx --no-warnings --test ./src/*.spec.ts",
     "prepare": "husky && case \"$npm_command\" in install|ci) check-node-version --package ;; esac",
+    "test": "node --experimental-transform-types --no-warnings --test ./src/*.spec.ts",
     "prepublishOnly": "npx tsc --noEmit false --outDir ./dist -d"
   },
   "repository": {
@@ -38,16 +38,17 @@
   "author": "Nordic Semiconductor ASA | nordicsemi.no",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@bifravst/eslint-config-typescript": "6.4.4",
+    "@bifravst/eslint-config-typescript": "7.0.34",
     "@bifravst/prettier-config": "1.1.17",
-    "@commitlint/config-conventional": "20.5.3",
+    "@commitlint/config-conventional": "21.2.2",
     "@types/aws-lambda": "8.10.162",
-    "@types/node": "25.9.5",
+    "@types/node": "26.2.0",
+    "@typescript/native": "npm:typescript@7.0.2",
     "check-node-version": "4.2.1",
-    "commitlint": "20.5.3",
+    "commitlint": "21.2.2",
     "husky": "9.1.7",
-    "lint-staged": "16.4.0",
-    "tsx": "4.23.12"
+    "lint-staged": "17.3.0",
+    "typescript": "npm:@typescript/typescript6@6.0.2"
   },
   "lint-staged": {
     "*.ts": [
@@ -59,7 +60,7 @@
     ]
   },
   "engines": {
-    "node": ">=24",
+    "node": ">=24.19.0 <25",
     "npm": ">=12.0.2 <13"
   },
   "release": {
@@ -90,7 +91,7 @@
   ],
   "prettier": "@bifravst/prettier-config",
   "peerDependencies": {
-    "@aws-sdk/client-ssm": "^3.1057.0",
-    "aws-cdk-lib": "^2.257.0"
+    "@aws-sdk/client-ssm": "^3.1111.0",
+    "aws-cdk-lib": "^2.265.0"
   }
 }
